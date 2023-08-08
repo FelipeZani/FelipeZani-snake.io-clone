@@ -1,23 +1,18 @@
 # Compiler
 CC := g++
-# Include libraries
-INCLUDE := -I$(shell pwd)/include
-# Source files
-SRCS := $(wildcard $(shell pwd)/src/*.cpp)
-# Object files
-OBJS := $(SRCS:.cpp=.o)
-# Executable name
-TARGET := main
+CFLAGS = -I$(IDIR)
+LDFLAGS = -L./include/lib -lSDL2 -lSDL2_image
+IDIR = ./include/headers/
+SRCDIR = ./src/
 
-all: $(TARGET)
+SOURCES = $(wildcard $(SRCDIR)*.cpp)
 
-$(TARGET): $(OBJS)
-	$(CC) -o $@ $(OBJS) -L$(shell pwd)/include -lSDL2_image -lSDL2
+all: main
 
-%.o: %.cpp
-	$(CC) $(INCLUDE) -c $< -o $@
+main: $(SOURCES)
+	$(CC) $(SOURCES) $(CFLAGS) $(LDFLAGS) -o $@
 
 run:
-	./$(TARGET)
+	./main
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm main
