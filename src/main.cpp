@@ -1,9 +1,10 @@
-    #include <iostream>
+#include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <algorithm>
 #include <vector>
 #include <deque>
+#include <string>
 #include "snake.hpp"
 
 const int nb_apples = 100;
@@ -24,16 +25,13 @@ int main( int argc, char * argv [] )
                         SDL_WINDOW_RESIZABLE |SDL_WINDOW_SHOWN);
     SDL_Renderer * renderer = SDL_CreateRenderer(window, -1, 0);;
     SDL_Event ev;
-
     
     getError(window);
     getError(renderer);
     
-    
     //player setup 
-    player p_snake = player();
+    player p_snake = player("sprites/headSpriteSheet.png", "sprites/bodypixel.png",renderer,1,4);
     
-
     //snake body
     std::deque <SDL_Rect> rq;
     int size = 1;
@@ -45,15 +43,12 @@ int main( int argc, char * argv [] )
     {
         apple.emplace_back(SDL_Rect{rand()%100*10,rand()%100*10, 10,10});
     }
-    //animation 
-    SDL_Surface * head_surface = IMG_Load("sprites/headSpriteSheet.png");
-    p_snake.headIMG = SDL_CreateTextureFromSurface(renderer, head_surface);
-
+    
     int nb_frames = 4;
-    int frame_width = head_surface->w / nb_frames;
-    int frame_height = head_surface->h;
+    int frame_width = p_snake.headIMG->w / nb_frames;
+    int frame_height = p_snake.headIMG->h;
     int sprite_frame = 0;
-
+    
     
     bool Running = true;
     int dir = 0;
@@ -102,8 +97,8 @@ int main( int argc, char * argv [] )
             p_snake.srcrect_head.x = frame_width;
 
         break;
-    }
-
+        }
+        if(rq.size()<1){rq.push_front(p_snake.dsrect_head);}
 
         //collision detection with apple
         std::for_each(apple.begin(), apple.end(),[&](auto& apple)
@@ -115,6 +110,7 @@ int main( int argc, char * argv [] )
                 apple.y = -10;
             }
         });
+        
 
         //add newest head to the snake
         rq.push_front(p_snake.dsrect_head);
@@ -130,21 +126,22 @@ int main( int argc, char * argv [] )
         {            
             SDL_RenderFillRect(renderer, &snake_segment);
         });
-        
+        for(const SDL_Rect & body_segment : rq){SDL_RenderCopy(renderer,p_snake.body_texture,&p_snake.body_rect,&body_segment);}
         //Draw apples
         SDL_SetRenderDrawColor(renderer, 255,0,0,255);
         std::for_each(apple.begin(), apple.end(), [&](auto& apple)
         {
             SDL_RenderFillRect(renderer, &apple);
         });
+
         // Render the updated frame
         SDL_RenderPresent(renderer);
         SDL_Delay(100);
 
 
+        //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_RenderClear(renderer);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-        SDL_RenderCopy(renderer, p_snake.headIMG, &p_snake.srcrect_head, &p_snake.dsrect_head); // Use srcrect to render only the selected sprite frame
+        SDL_RenderCopy(renderer, p_snake.head_texture, &p_snake.srcrect_head, &p_snake.dsrect_head); // Use srcrect to render only the selected sprite frame
         SDL_RenderPresent(renderer);
     }
 
