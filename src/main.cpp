@@ -52,7 +52,9 @@ int main( int argc, char * argv [] )
     
     bool Running = true;
     int dir = 0;
-
+    
+    SDL_RenderCopy(renderer, p_snake.head_texture, &p_snake.srcrect_head, &p_snake.dsrect_head);
+    SDL_RenderPresent(renderer);
     while(Running)
     {
         //check Input
@@ -98,8 +100,9 @@ int main( int argc, char * argv [] )
 
         break;
         }
+        SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
         if(rq.size()<1){rq.push_front(p_snake.dsrect_head);}
-
+        for(const SDL_Rect & body_segment : rq){SDL_RenderCopy(renderer,p_snake.body_texture,&p_snake.srcrect_head,&body_segment);}
         //collision detection with apple
         std::for_each(apple.begin(), apple.end(),[&](auto& apple)
         {
@@ -119,30 +122,24 @@ int main( int argc, char * argv [] )
         //clear window
         SDL_SetRenderDrawColor(renderer, 0,0,0,255);
         SDL_RenderClear(renderer);
-        
-        //draw the body
+        /*
+        draw the body
         SDL_SetRenderDrawColor(renderer, 255,255,255,255);
         std::for_each(rq.begin(), rq.end(),[&](auto& snake_segment)
         {            
             SDL_RenderFillRect(renderer, &snake_segment);
         });
-        for(const SDL_Rect & body_segment : rq){SDL_RenderCopy(renderer,p_snake.body_texture,&p_snake.body_rect,&body_segment);}
+        */
         //Draw apples
         SDL_SetRenderDrawColor(renderer, 255,0,0,255);
         std::for_each(apple.begin(), apple.end(), [&](auto& apple)
         {
             SDL_RenderFillRect(renderer, &apple);
         });
-
-        // Render the updated frame
-        SDL_RenderPresent(renderer);
-        SDL_Delay(100);
-
-
-        //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-        SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, p_snake.head_texture, &p_snake.srcrect_head, &p_snake.dsrect_head); // Use srcrect to render only the selected sprite frame
         SDL_RenderPresent(renderer);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        SDL_Delay(100);
     }
 
     SDL_DestroyWindow(window);

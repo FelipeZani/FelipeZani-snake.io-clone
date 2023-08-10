@@ -11,10 +11,12 @@ class player
     public:
         SDL_Rect srcrect_head;
         SDL_Rect dsrect_head;
-        SDL_Rect body_rect;
         SDL_Surface * headIMG;
         SDL_Texture * head_texture;
         std :: deque < SDL_Rect > body;
+        
+        SDL_Rect dsbody_rect;
+        SDL_Rect srcbody_rect;
         SDL_Surface * bodyIMG;
         SDL_Texture * body_texture;
         int size;
@@ -30,14 +32,13 @@ class player
         nb_sprites = Anb_sprites;
 
         srcrect_head = { 0, 0 , headIMG->w/Anb_sprites, headIMG->h };
-        dsrect_head = { 380, 240, headIMG->w/Anb_sprites, headIMG->h };        
+        dsrect_head = { 380, 240, headIMG->w/Anb_sprites, headIMG->h };
+        
+        srcbody_rect = { 0,0,bodyIMG->w, bodyIMG->h};
+        dsbody_rect = { dsrect_head.x,dsrect_head.y,bodyIMG->w, bodyIMG->h};
+         
     }
-    void draw_body(SDL_Renderer * renderer)
-    {
-        SDL_SetRenderDrawColor(renderer, 255,255,255,255);
-        for(const SDL_Rect & body_segment : body){SDL_RenderCopy(renderer,body_texture,&body_rect,&body_segment);}
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-    }
+  
 };
 
 #endif
