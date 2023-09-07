@@ -5,7 +5,6 @@
 #include <SDL2/SDL.h>
 #include <vector>
 #include <cmath>
-#include "snake.hpp"
 
 const int nb_fruits = 100;
 
@@ -26,7 +25,7 @@ class Fruit
 //Food control functions
 void place_food(std::vector<SDL_Rect>* fruit, int nb_units);
 
-void detect_colisition(std::vector<SDL_Rect>* fruit, Player* snake);
+bool detect_colisition(std::vector<SDL_Rect> *fruit, SDL_Rect * dsrect_head, int * size);
 
 void draw_food(const std::vector<SDL_Rect>fruit, SDL_Renderer* renderer);
 

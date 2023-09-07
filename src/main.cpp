@@ -24,15 +24,15 @@ int main( int argc, char * argv [] )
     getError(window);
     getError(renderer); 
     
-    //player setup 
-    Player p_snake = Player("sprites/headSpriteSheet1.png", "sprites/bodypixel.png",renderer,1,4);
+    //snake setup 
+    Snake p_snake = Snake("sprites/headSpriteSheet1.png", "sprites/bodypixel.png",renderer,1,4);
     
+    //enemies setup
+    Esnake e_snake = Esnake("sprites/headSpriteSheet1.png", "sprites/bodypixel.png",renderer,1,4);
     //apple setup
     SDL_Color red = {255,0,0,0};
     Fruit apples = Fruit(red,100);
 
-    // apple container
-    std::vector <SDL_Rect> apple;
 
     bool Running = true;
     
@@ -41,36 +41,42 @@ int main( int argc, char * argv [] )
 
     while(Running)
     {
-        //check Input
-        set_player_direction(&Running,&p_snake.dir);
-
+        while(SDL_PollEvent(&ev))
+        {
+            if(ev.type == SDL_QUIT)
+                Running = false;
+            //check Input
+            set_snake_direction(&p_snake.dir,&p_snake.prev_dir, &ev);
+        }
+       
         //create a padding between each member of the body
-        player_padding(p_snake.size, p_snake.dir,  &p_snake.prev_dir ,&p_snake.body );
+        snake_padding(p_snake.size, p_snake.dir,  &p_snake.prev_dir ,&p_snake.body );
 
         //move
-        player_move(p_snake.dir, & p_snake.dsrect_head);
+        snake_move(p_snake.dir, & p_snake.dsrect_head);
 
         // Update the sprite frame based on the direction
-        player_heading_animation(renderer,p_snake,&p_snake.srcrect_head,p_snake.frame_width,p_snake.dir);
+        snake_heading_animation(renderer,p_snake,&p_snake.srcrect_head,p_snake.frame_width,p_snake.dir);
 
         SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 
-        detect_colisition(&apples.fruit, &p_snake);
-        
+        detect_colisition(&apples.fruit,&p_snake.dsrect_head,&p_snake.size);
+    
         //collision detection with apple
 
         draw_body(renderer,& p_snake);
+
+        enemies_actions(renderer, &e_snake, &apples.fruit);
         
         //Draw apples
         SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+        
         draw_food(apples.fruit, renderer);
-        /*
-        for(const auto & apple_unit : apple)
-            SDL_RenderFillRect(renderer, &apple_unit);
-        */
+
         SDL_RenderPresent(renderer);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_Delay(100);
+        SDL_RenderClear(renderer);
     }
 
     SDL_DestroyWindow(window);
