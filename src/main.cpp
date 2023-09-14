@@ -28,7 +28,7 @@ int main( int argc, char * argv [] )
     Snake p_snake = Snake("sprites/headSpriteSheet1.png", "sprites/bodypixel.png",renderer,1,4);
     
     //enemies setup
-    Esnake e_snake = Esnake("sprites/headSpriteSheet1.png", "sprites/bodypixel.png",renderer,1,4);
+    Esnake e_snake = Esnake("sprites/BotHeadSpriteSheet.png", "sprites/bodybotpixel.png",renderer,1,4);
     //apple setup
     SDL_Color red = {255,0,0,0};
     Fruit apples = Fruit(red,100);
